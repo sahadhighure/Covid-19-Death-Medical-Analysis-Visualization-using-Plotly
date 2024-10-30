@@ -1,0 +1,70 @@
+# COVID-19 Pre-existing Medical Condition Analysis
+
+# Task 1: Importing all the necessary libraries
+import pandas as pd  # Data analysis and manipulation
+import plotly.express as px  # Data visualization (one line of code for one graph)
+import matplotlib.pyplot as plt  # Data visualization for WordCloud
+from wordcloud import WordCloud  # Word cloud text visualization
+
+# If using Google Colab, initialize Plotly for rendering
+import plotly.io as pio
+pio.renderers.default = 'colab'
+
+# Install WordCloud if not available
+try:
+    from wordcloud import WordCloud
+except ModuleNotFoundError:
+    !pip install wordcloud
+
+# Task 2: Importing the dataset and Visualizing it (Dataset 1: Worldometer dataset)
+worldometer_data = pd.read_csv('path/to/covid_worldometer_data.csv')  # Update this path
+print(worldometer_data.head())  # Display the first few rows
+
+# Quick visualization of total COVID-19 cases by country
+fig = px.bar(worldometer_data, x='Country', y='Total Cases', title='Total COVID-19 Cases by Country')
+fig.show()
+
+# Task 3: Geographic Visualization using Choropleth maps
+fig = px.choropleth(worldometer_data,
+                    locations='ISOALPHA',  # ISO Alpha-3 codes
+                    color='Total Cases',  # Data to be visualized
+                    hover_name='Country',
+                    color_continuous_scale='Viridis',
+                    title='Total COVID-19 Cases Worldwide')
+fig.show()
+
+# Task 4: Importing and Analyzing the Pre-existing Condition Medical Dataset
+medical_data = pd.read_csv('path/to/US_medical_data.csv')  # Update this path
+print(medical_data.head())  # Display the first few rows
+
+# Task 5: Visualizing the Pre-existing Condition Medical Dataset
+fig = px.bar(medical_data, 
+              x='Condition', 
+              y='Prevalence', 
+              title='Pre-existing Conditions Prevalence in the US')
+fig.show()
+
+# Task 6: WordCloud Text Visualization
+# Step a: Convert the columns with conditions and condition group into lists
+conditions_list = medical_data['Condition'].tolist()
+condition_group_list = medical_data['Condition Group'].tolist()
+
+# Step b: Convert the lists to single strings
+conditions_string = ' '.join(conditions_list)
+condition_group_string = ' '.join(condition_group_list)
+
+# Step c: Generate WordCloud for Conditions
+wordcloud_conditions = WordCloud(width=800, height=400, background_color='white').generate(conditions_string)
+plt.figure(figsize=(10, 5))
+plt.imshow(wordcloud_conditions, interpolation='bilinear')
+plt.axis('off')
+plt.title('Word Cloud for Conditions')
+plt.show()
+
+# Generate WordCloud for Condition Groups
+wordcloud_condition_group = WordCloud(width=800, height=400, background_color='white').generate(condition_group_string)
+plt.figure(figsize=(10, 5))
+plt.imshow(wordcloud_condition_group, interpolation='bilinear')
+plt.axis('off')
+plt.title('Word Cloud for Condition Groups')
+plt.show()
